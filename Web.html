@@ -1,0 +1,73 @@
+<!DOCTYPE html><html>
+<head>
+  <!--The title-->
+  <title>Leaflet Essentials</title>
+  <!-- Imports a JavaScript file from the specified URL and includes it in the current HTML document. -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.0.2/dist/leaflet.css"/>
+</head>
+<body>
+<script src="https://unpkg.com/leaflet@1.0.2/dist/leaflet.js"></script>
+<div id="mapid" style="width: 600px; height: 400px; margin: auto"></div>
+<script>
+   /*This code initializes a Leaflet map by creating a new map object and setting its view to the specified coordinates and zoom level.*/
+   var mymap = L.map('mapid').setView([47.656896, -122.307511],16);
+L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png').addTo(mymap);
+
+/* Defines a JavaScript object named "myZoneUW" which represents a GeoJSON FeatureCollection. Contains an array of features, each representing a specific zone or location on the map.*/
+
+var myZoneUW = {"type":"FeatureCollection",
+	"features":[{
+			"type":"Feature", 
+			"properties":{"name":"Suzzallo ","short description":"A famous library with gothic design","StudySpace":"Yes"},
+			"geometry":{"type":"Polygon", 
+						"coordinates":[[[-122.30861334182669,47.65615468694867],[-122.30877250768665,47.65557122634121],[-122.30865966428132,47.655371971879504],[-122.30788819397657,47.655585341870875],[-122.30749152960169,47.65552688777845],[-122.30738546430986,47.655889334092336],[-122.30788635372267,47.65606318737798],[-122.30861334182669,47.65615468694867]]]}},
+
+{"type":"Feature","properties":{"name":"HUB","short description":"A vibrant student center at UW","StudySpace":"Maybe"},"geometry":{"type":"Polygon", "coordinates":[[[ -122.30529879198309,47.65588189920143], [-122.30567813475989,47.65512385576858],[-122.30556433192694,47.654919437677876],[-122.3053325113411,47.65466391393963],[-122.30475506733615,47.65507275132103],[-122.30463283466364,47.65548726373126],[-122.30480986129297,47.65580808272139],[-122.30529879198309,47.65588189920143]]]}},
+
+{"type":"Feature","properties":{"name":"The Quad","short description":"The place has beautiful cherry blossoms in bloom in March.","StudySpace":"No"},"geometry":{"type":"Polygon", "coordinates":[[[-122.30841671874609,47.65697704935067],[-122.30773713070946,47.65649833301774],[-122.3060148159912,47.65760601304291],[-122.30672553019743,47.658084719219715],[-122.30841671874609,47.65697704935067]]]}}]}
+
+ /* creates a Leaflet GeoJSON layer named "geojsonLayer" and adds it to the previously defined Leaflet map "mymap". The layer is confiurerd with Style and onEachFeature options*/
+var geojsonLayer = L.geoJSON(myZoneUW, {
+  style: styleFunction,
+  onEachFeature: happenHover
+}).addTo(mymap);
+
+// Determine the style for each feature in the GeoJSON layer.
+function styleFunction(feature) {
+  return { color: "purple" };
+}
+
+// Define a new style for the GeoJSON layer.
+function newStyle(e) {
+  var layer = e.target; // Get the layer that triggered the event
+  layer.setStyle({ color: "blue" }); // Set the style of the target layer to blue
+}
+
+// Revert the style of the layer to its original state.
+function oldStyle(e) {
+  var layer = e.target; // Get the layer that triggered the event
+  layer.setStyle({ color: "purple" }); // Set the style of the target layer back to purple
+}
+
+// Callback function for handling hover events on each feature in the GeoJSON layer.
+function happenHover(feature, layer) {
+  layer.bindPopup(
+    feature.properties["name"] +
+      "<br>" +
+      feature.properties["short description"],
+    { closeButton: false }
+  );
+  layer.on("mouseover", function (e) {
+    layer.openPopup();
+    newStyle(e); // Apply the new style to the target layer on mouseover
+  });
+  layer.on("mouseout", function (e) {
+    layer.closePopup();
+    oldStyle(e); // Revert the style of the target layer on mouseout
+  });
+}
+
+
+</script>
+</body>
+</html>
